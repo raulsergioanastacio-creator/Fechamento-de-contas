@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acerto de Contas">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>Acerto de Contas - Casal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="icon-192.png">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* Barra de rolagem suave */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animação suave ao adicionar campos */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    
+        html, body { min-height: 100%; }
+        body { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+        @media (max-width: 640px) {
+            header.sticky { padding-top: calc(.75rem + env(safe-area-inset-top)); }
+            main { padding-left: .75rem !important; padding-right: .75rem !important; }
+            #final-result-card { min-width: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-24 bg-slate-50">
+
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm w-full p-4 transition-all">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Acerto de Contas</h1>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Raul & Franciele</p>
+            </div>
+            
+            <div id="final-result-card" class="bg-slate-100 px-6 py-3 rounded-2xl border-2 border-slate-200 text-center min-w-[300px] shadow-sm">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Resultado Final</p>
+                <p id="final-statement" class="text-xl md:text-2xl font-black text-slate-400">
+                    Tudo quite!
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div id="install-bar" class="hidden sticky top-0 z-40 px-3 pt-2"><button id="install-btn" class="w-full max-w-6xl mx-auto block rounded-2xl bg-slate-900 text-white font-bold py-3 shadow-lg">📲 Instalar aplicativo</button></div>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-8 mt-4">
+        <section id="dashboard" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200"><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Raul pagou</p><p id="dash-raul" class="text-lg font-black text-blue-700 mt-1">R$ 0,00</p></div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200"><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Fran pagou</p><p id="dash-fran" class="text-lg font-black text-rose-600 mt-1">R$ 0,00</p></div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 col-span-2 md:col-span-2"><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Acerto</p><p id="dash-settlement" class="text-lg font-black text-slate-800 mt-1">Tudo quite!</p></div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- COLUNA RAUL -->
+            <div class="bg-white rounded-3xl p-5 md:p-7 shadow-xl shadow-blue-900/5 border-t-4 border-blue-500 space-y-8">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">R</div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Gastos do Raul</h2>
+                        <p class="text-xs text-slate-500">Coisas que o Raul pagou</p>
+                    </div>
+                </div>
+
+                <!-- Raul: Gastos Compartilhados -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700">Mercado / Diversos</h3>
+                            <p class="text-[10px] text-slate-400 font-medium bg-slate-100 inline-block px-1.5 py-0.5 rounded">Ela paga 50%</p>
+                        </div>
+                    </div>
+                    <div id="raul-shared-list" class="space-y-2"></div>
+                    <button onclick="addField('raul-shared-list', 'raul', 'shared')" class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-blue-100">
+                        + Adicionar Gasto
+                    </button>
+                </div>
+
+                <!-- Raul: Cartão de Crédito -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700">Cartão de Crédito</h3>
+                            <p class="text-[10px] text-slate-400 font-medium bg-slate-100 inline-block px-1.5 py-0.5 rounded">Ela paga 50%</p>
+                        </div>
+                    </div>
+                    <div id="raul-card-list" class="space-y-2"></div>
+                    <button onclick="addField('raul-card-list', 'raul', 'card')" class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-blue-100">
+                        + Adicionar Fatura
+                    </button>
+                </div>
+
+                <!-- Raul: Emprestado -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700 text-amber-600">Dinheiro Emprestado à Fran</h3>
+                            <p class="text-[10px] text-amber-500 font-medium bg-amber-50 inline-block px-1.5 py-0.5 rounded">Ela paga 100%</p>
+                        </div>
+                    </div>
+                    <div id="raul-lent-list" class="space-y-2"></div>
+                    <button onclick="addField('raul-lent-list', 'raul', 'lent')" class="text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-amber-100">
+                        + Adicionar Empréstimo
+                    </button>
+                </div>
+
+                <!-- Raul: Material de Construção -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700 text-indigo-600">Material de Construção</h3>
+                            <p class="text-[10px] text-indigo-500 font-medium bg-indigo-50 inline-block px-1.5 py-0.5 rounded">Ela paga 100%</p>
+                        </div>
+                    </div>
+                    <div id="raul-construction-list" class="space-y-2"></div>
+                    <button onclick="addField('raul-construction-list', 'raul', 'construction')" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-indigo-100">
+                        + Adicionar Material
+                    </button>
+                </div>
+            </div>
+
+            <!-- COLUNA FRANCIELE -->
+            <div class="bg-white rounded-3xl p-5 md:p-7 shadow-xl shadow-rose-900/5 border-t-4 border-rose-400 space-y-8">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-bold text-xl">F</div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Gastos da Fran</h2>
+                        <p class="text-xs text-slate-500">Coisas que a Franciele pagou</p>
+                    </div>
+                </div>
+
+                <!-- Fran: Gastos Compartilhados -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700">Mercado / Diversos</h3>
+                            <p class="text-[10px] text-slate-400 font-medium bg-slate-100 inline-block px-1.5 py-0.5 rounded">Ele paga 50%</p>
+                        </div>
+                    </div>
+                    <div id="fran-shared-list" class="space-y-2"></div>
+                    <button onclick="addField('fran-shared-list', 'fran', 'shared')" class="text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-rose-100">
+                        + Adicionar Gasto
+                    </button>
+                </div>
+
+                <!-- Fran: Cartão de Crédito -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700">Cartão de Crédito</h3>
+                            <p class="text-[10px] text-slate-400 font-medium bg-slate-100 inline-block px-1.5 py-0.5 rounded">Ele paga 50%</p>
+                        </div>
+                    </div>
+                    <div id="fran-card-list" class="space-y-2"></div>
+                    <button onclick="addField('fran-card-list', 'fran', 'card')" class="text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-rose-100">
+                        + Adicionar Fatura
+                    </button>
+                </div>
+
+                <!-- Fran: Emprestado -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="font-semibold text-slate-700 text-amber-600">Emprestados do Raul (Devolução)</h3>
+                            <p class="text-[10px] text-amber-500 font-medium bg-amber-50 inline-block px-1.5 py-0.5 rounded">Abate 100% da dívida</p>
+                        </div>
+                    </div>
+                    <div id="fran-lent-list" class="space-y-2"></div>
+                    <button onclick="addField('fran-lent-list', 'fran', 'lent')" class="text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 w-full justify-center mt-2 border border-amber-100">
+                        + Adicionar Pagamento
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-slate-300 border-dashed"></div>
+            </div>
+            <div class="relative flex justify-center">
+                <span class="bg-[#f8fafc] px-4 text-sm text-slate-500 font-bold uppercase tracking-widest">Acréscimo na Dívida da Fran</span>
+            </div>
+        </div>
+
+        <!-- Calculadora de Combustível Original Adaptada -->
+        <div class="bg-white rounded-3xl shadow-xl shadow-emerald-900/5 max-w-sm mx-auto overflow-hidden border border-emerald-100 mt-6">
+            <header class="bg-emerald-600 p-5 text-white text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                
+                <h1 class="text-xl font-bold relative z-10">🚗 Combustível</h1>
+                <p class="text-emerald-100 text-[11px] mt-1 font-medium relative z-10">Este valor é 100% cobrado da Fran</p>
+            </header>
+
+            <div class="p-5 space-y-5">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 flex justify-between items-center text-xs">
+                    <div class="text-center">
+                        <p class="text-slate-500 font-medium">Consumo</p>
+                        <p class="text-base font-bold text-slate-700">10 <span class="font-normal text-[10px]">km/L</span></p>
+                    </div>
+                    <div class="w-px h-8 bg-slate-200"></div>
+                    <div class="text-center">
+                        <p class="text-slate-500 font-medium">Trajeto</p>
+                        <p class="text-base font-bold text-slate-700">32 <span class="font-normal text-[10px]">km/dia</span></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Litro do Álcool (R$)</label>
+                        <input type="number" id="fuel-price" value="4.00" step="0.01" min="0" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 focus:ring-2 focus:ring-emerald-500 font-medium text-sm outline-none" placeholder="4,00">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Dias Totais de Trabalho</label>
+                        <input type="number" id="fuel-days" value="20" step="0.5" min="0" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 focus:ring-2 focus:ring-emerald-500 font-medium text-sm outline-none" placeholder="Ex: 20">
+                    </div>
+
+                    <div class="pt-1">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Corridas de App (Desconta 0,5 dia)</label>
+                        <input type="number" id="fuel-app-days" value="0" step="1" min="0" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 focus:ring-2 focus:ring-purple-500 font-medium text-sm outline-none" placeholder="Ex: 2">
+                    </div>
+
+                    <div id="fuel-app-costs-container" class="space-y-2 hidden bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200">
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 flex justify-between items-center">
+                        <div>
+                            <p class="text-amber-700 text-[10px] font-bold uppercase">Saldo Final Combustível</p>
+                            <p class="text-[9px] text-amber-600">Este valor vai pro acerto final</p>
+                        </div>
+                        <p class="text-lg font-extrabold text-amber-900">
+                            <span class="text-xs">R$</span> <span id="fuel-balance-cost">0,00</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumo Detalhado -->
+        <div class="bg-slate-800 rounded-3xl p-6 md:p-8 shadow-xl mt-8 border border-slate-700">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    📄 Resumo Detalhado
+                </h2>
+                <button onclick="copySummaryToClipboard(this)" class="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V96a8,8,0,0,0-8-8H96V48H208Z"></path></svg>
+                    <span id="copy-btn-text">Copiar para WhatsApp</span>
+                </button>
+            </div>
+            <div id="summary-content" class="text-sm">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // === VARIÁVEIS GLOBAIS ===
+        let globalFuelDebt = 0; // O valor que a Fran deve de combustível
+
+        // === 1. LÓGICA DE CAMPOS DINÂMICOS (GASTOS RAUL E FRAN) ===
+        
+        function addField(containerId, person, category) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = "expense-entry flex flex-col gap-2 p-3 bg-slate-50/50 border border-slate-100 rounded-xl mb-3 shadow-sm fade-in";
+            
+            // Definir cores das bordas baseados na pessoa para ficar bonitinho
+            const focusColor = person === 'raul' ? 'focus:ring-blue-500' : 'focus:ring-rose-500';
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-start gap-2">
+                    <input type="text" placeholder="Local/Descrição (ex: Mercado)" class="desc-input flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 ${focusColor} outline-none transition-colors" oninput="calculateGlobalBalance()">
+                    <button onclick="this.closest('.expense-entry').remove(); calculateGlobalBalance()" class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors font-bold" title="Remover Local">
+                        &times;
+                    </button>
+                </div>
+                <div class="values-list flex flex-wrap gap-2 items-center">
+                    <div class="value-item relative flex items-center w-32 md:w-36 flex-shrink-0">
+                        <span class="absolute left-2.5 top-2 text-slate-400 text-xs font-bold">R$</span>
+                        <input type="number" step="0.01" min="0" placeholder="0,00" class="expense-input w-full pl-8 pr-7 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 ${focusColor} outline-none transition-colors" data-person="${person}" data-category="${category}" oninput="calculateGlobalBalance()">
+                        <button onclick="this.parentElement.remove(); calculateGlobalBalance()" class="absolute right-1.5 top-1.5 w-5 h-5 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors text-lg" title="Remover valor">&times;</button>
+                    </div>
+                    <button onclick="addValueToGroup(this, '${person}', '${category}')" class="h-9 px-3 flex-shrink-0 flex items-center justify-center rounded-lg bg-slate-200/60 text-slate-600 hover:bg-slate-300 hover:text-slate-800 transition-colors text-xs font-bold" title="Adicionar outro valor neste local">
+                        + R$
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function addValueToGroup(btn, person, category) {
+            const focusColor = person === 'raul' ? 'focus:ring-blue-500' : 'focus:ring-rose-500';
+            const div = document.createElement('div');
+            div.className = "value-item relative flex items-center w-32 md:w-36 flex-shrink-0 fade-in";
+            div.innerHTML = `
+                <span class="absolute left-2.5 top-2 text-slate-400 text-xs font-bold">R$</span>
+                <input type="number" step="0.01" min="0" placeholder="0,00" class="expense-input w-full pl-8 pr-7 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 ${focusColor} outline-none transition-colors" data-person="${person}" data-category="${category}" oninput="calculateGlobalBalance()">
+                <button onclick="this.parentElement.remove(); calculateGlobalBalance()" class="absolute right-1.5 top-1.5 w-5 h-5 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors text-lg" title="Remover valor">&times;</button>
+            `;
+            btn.parentElement.insertBefore(div, btn);
+            // Coloca o foco automático no novo campo criado
+            div.querySelector('input').focus();
+        }
+
+        // Adiciona um campo vazio inicial em cada seção para facilitar a usabilidade
+        function initFields() {
+            addField('raul-shared-list', 'raul', 'shared');
+            addField('raul-card-list', 'raul', 'card');
+            addField('raul-lent-list', 'raul', 'lent');
+            addField('raul-construction-list', 'raul', 'construction');
+            addField('fran-shared-list', 'fran', 'shared');
+            addField('fran-card-list', 'fran', 'card');
+            addField('fran-lent-list', 'fran', 'lent');
+        }
+
+        // === 2. LÓGICA DA CALCULADORA DE COMBUSTÍVEL (EMBUTIDA) ===
+        
+        const KM_POR_LITRO = 10;
+        const KM_POR_DIA = 32;
+
+        const fuelPriceInput = document.getElementById('fuel-price');
+        const fuelDaysInput = document.getElementById('fuel-days');
+        const fuelAppDaysInput = document.getElementById('fuel-app-days');
+        const fuelAppCostsContainer = document.getElementById('fuel-app-costs-container');
+        const fuelBalanceCostDisplay = document.getElementById('fuel-balance-cost');
+
+        function updateFuelFields() {
+            let appDays = parseInt(fuelAppDaysInput.value);
+            if (isNaN(appDays) || appDays < 0) appDays = 0;
+            if (appDays > 31) appDays = 31;
+
+            fuelAppCostsContainer.innerHTML = '';
+
+            if (appDays > 0) {
+                fuelAppCostsContainer.classList.remove('hidden');
+                
+                const header = document.createElement('p');
+                header.className = 'text-[10px] font-bold text-purple-700 mb-2 uppercase tracking-wide';
+                header.textContent = 'Valores dos Ubers:';
+                fuelAppCostsContainer.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-2 gap-2';
+                fuelAppCostsContainer.appendChild(grid);
+
+                for (let i = 1; i <= appDays; i++) {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <div class="relative">
+                            <span class="absolute left-2 top-1.5 text-slate-400 text-xs font-bold">R$</span>
+                            <input type="number" step="0.01" min="0" value="" placeholder="0,00"
+                                class="fuel-app-price-input block w-full pl-7 pr-1 py-1.5 bg-white border border-purple-200 rounded-lg text-slate-800 text-sm font-medium outline-none focus:border-purple-500">
+                        </div>
+                    `;
+                    grid.appendChild(div);
+                }
+
+                document.querySelectorAll('.fuel-app-price-input').forEach(input => {
+                    input.addEventListener('input', calculateGlobalBalance);
+                });
+            } else {
+                fuelAppCostsContainer.classList.add('hidden');
+            }
+            
+            calculateGlobalBalance();
+        }
+
+        fuelPriceInput.addEventListener('input', calculateGlobalBalance);
+        fuelDaysInput.addEventListener('input', calculateGlobalBalance);
+        fuelAppDaysInput.addEventListener('input', updateFuelFields);
+
+        // === 3. MOTOR CENTRAL DE CÁLCULOS ===
+
+        function calculateGlobalBalance() {
+            // 3.1 - Processar o Combustível Primeiro
+            let price = parseFloat(fuelPriceInput.value.replace(',', '.')) || 0;
+            let baseDays = parseFloat(fuelDaysInput.value.replace(',', '.')) || 0;
+            let uberTrips = parseInt(fuelAppDaysInput.value) || 0;
+
+            let diasEfetivosCarro = baseDays - (uberTrips * 0.5);
+            if (diasEfetivosCarro < 0) diasEfetivosCarro = 0;
+
+            const totalKm = diasEfetivosCarro * KM_POR_DIA;
+            const litrosUsados = totalKm / KM_POR_LITRO;
+            const custoCarro = litrosUsados * price;
+
+            let custoApp = 0;
+            document.querySelectorAll('.fuel-app-price-input').forEach(input => {
+                custoApp += parseFloat(input.value.replace(',', '.')) || 0;
+            });
+
+            globalFuelDebt = custoCarro - custoApp;
+            fuelBalanceCostDisplay.textContent = globalFuelDebt.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+            // 3.2 - Processar Todos os Outros Gastos e Salvar as Descrições
+            let raulShared = 0, raulCard = 0, raulLent = 0, raulConstruction = 0;
+            let franShared = 0, franCard = 0, franLent = 0;
+
+            // Objeto para guardar os itens um por um
+            let details = {
+                raul: { shared: [], card: [], lent: [], construction: [] },
+                fran: { shared: [], card: [], lent: [] }
+            };
+
+            // Iterando por blocos (locais) em vez de inputs isolados
+            document.querySelectorAll('.expense-entry').forEach(entry => {
+                const descInput = entry.querySelector('.desc-input');
+                const desc = descInput.value.trim() || 'Sem descrição';
+                
+                let localTotals = {
+                    raul: { shared: [], card: [], lent: [], construction: [] },
+                    fran: { shared: [], card: [], lent: [] }
+                };
+
+                entry.querySelectorAll('.expense-input').forEach(input => {
+                    const val = parseFloat(input.value.replace(',', '.')) || 0;
+                    if (val > 0) {
+                        const person = input.dataset.person;
+                        const cat = input.dataset.category;
+                        
+                        localTotals[person][cat].push(val); // Guarda os valores individuais
+                        
+                        if (person === 'raul') {
+                            if (cat === 'shared') raulShared += val; 
+                            if (cat === 'card') raulCard += val; 
+                            if (cat === 'lent') raulLent += val; 
+                            if (cat === 'construction') raulConstruction += val; 
+                        } else if (person === 'fran') {
+                            if (cat === 'shared') franShared += val; 
+                            if (cat === 'card') franCard += val; 
+                            if (cat === 'lent') franLent += val; 
+                        }
+                    }
+                });
+                
+                // Agrupar os valores para exibir no recibo detalhado
+                const processTotals = (personObj, personName) => {
+                    for (const cat in personObj) {
+                        const vals = personObj[cat];
+                        if (vals.length > 0) {
+                            const sum = vals.reduce((a, b) => a + b, 0); // Soma os valores do mesmo local
+                            let finalDesc = desc;
+                            
+                            // Se tiver mais de um valor para o mesmo local, mostra os detalhes (Ex: 15,00 + 20,00)
+                            if (vals.length > 1) {
+                                const valsStr = vals.map(v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })).join(' + ');
+                                finalDesc = `${desc} <span class="text-[10px] text-slate-500 font-normal">(${valsStr})</span>`;
+                            }
+                            
+                            details[personName][cat].push({ desc: finalDesc, val: sum });
+                        }
+                    }
+                };
+                
+                processTotals(localTotals.raul, 'raul');
+                processTotals(localTotals.fran, 'fran');
+            });
+
+            // 3.3 - Aplicar a Matemática Final
+            
+            // O que a Franciele deve ao Raul:
+            // 50% dos gastos compartilhados + 50% do cartão + 100% de empréstimos + 100% de construção + 100% do combustível
+            const franOwesRaul = (raulShared / 2) + (raulCard / 2) + raulLent + raulConstruction + globalFuelDebt;
+
+            // O que o Raul deve à Franciele:
+            // 50% dos gastos compartilhados + 50% do cartão + 100% de empréstimos
+            const raulOwesFran = (franShared / 2) + (franCard / 2) + franLent;
+
+            // Diferença:
+            const netBalance = franOwesRaul - raulOwesFran;
+            const totalRaulPaid = raulShared + raulCard + raulLent + raulConstruction;
+            const totalFranPaid = franShared + franCard + franLent;
+            const money = (v) => `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('dash-raul').textContent = money(totalRaulPaid);
+            document.getElementById('dash-fran').textContent = money(totalFranPaid);
+            const dashSettlement = document.getElementById('dash-settlement');
+            dashSettlement.textContent = netBalance > 0.01 ? `Fran deve ${money(netBalance)}` : netBalance < -0.01 ? `Raul deve ${money(Math.abs(netBalance))}` : 'Tudo quite!';
+
+            // 3.4 - Atualizar a Interface do Cabeçalho
+            const resultCard = document.getElementById('final-result-card');
+            const resultText = document.getElementById('final-statement');
+
+            // Resetar classes
+            resultCard.className = "px-6 py-3 rounded-2xl border-2 text-center min-w-[300px] shadow-sm transition-all duration-300 ";
+
+            if (netBalance > 0.01) { // Franciele deve ao Raul
+                resultCard.classList.add('bg-blue-50', 'border-blue-200');
+                resultText.className = "text-xl md:text-2xl font-black text-blue-700";
+                resultText.innerHTML = `Fran deve: <span class="text-blue-900">R$ ${netBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>`;
+            } else if (netBalance < -0.01) { // Raul deve à Franciele
+                resultCard.classList.add('bg-rose-50', 'border-rose-200');
+                resultText.className = "text-xl md:text-2xl font-black text-rose-700";
+                const absoluteDebt = Math.abs(netBalance);
+                resultText.innerHTML = `Raul deve: <span class="text-rose-900">R$ ${absoluteDebt.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>`;
+            } else { // Tudo quite
+                resultCard.classList.add('bg-slate-100', 'border-slate-200');
+                resultText.className = "text-xl md:text-2xl font-black text-slate-500";
+                resultText.innerHTML = "Tudo quite!";
+            }
+
+            // 3.5 - Gerar Resumo Detalhado Item por Item
+            const formatMoney = (val) => `R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            
+            // Função que desenha a listinha de itens
+            const renderItemList = (items, colorClass) => {
+                if (items.length === 0) return `<div class="text-slate-500 italic text-xs py-1">Nenhum valor lançado</div>`;
+                return items.map(item => `
+                    <div class="flex justify-between items-start text-xs py-1.5 border-b border-slate-700/50 last:border-0">
+                        <span class="pr-2 text-slate-400 flex-1 leading-relaxed">- ${item.desc}</span> 
+                        <span class="font-medium ${colorClass} whitespace-nowrap ml-2">${formatMoney(item.val)}</span>
+                    </div>
+                `).join('');
+            };
+            
+            document.getElementById('summary-content').innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                    <!-- Raul Resumo -->
+                    <div>
+                        <h3 class="text-blue-400 font-bold uppercase tracking-wider text-[11px] mb-4 border-b border-slate-700 pb-2">Gastos que o Raul pagou</h3>
+                        <div class="space-y-4">
+                            
+                            <!-- Mercado Raul -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-slate-200">Mercado / Diversos</span>
+                                    <span class="text-xs font-bold text-white bg-slate-700 px-2 py-0.5 rounded">Total: ${formatMoney(raulShared)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.raul.shared, 'text-slate-300')}
+                                </div>
+                            </div>
+
+                            <!-- Cartão Raul -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-slate-200">Cartão de Crédito</span>
+                                    <span class="text-xs font-bold text-white bg-slate-700 px-2 py-0.5 rounded">Total: ${formatMoney(raulCard)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.raul.card, 'text-slate-300')}
+                                </div>
+                            </div>
+
+                            <!-- Emprestado Raul -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-amber-500">Emprestou à Fran</span>
+                                    <span class="text-xs font-bold text-amber-400 bg-amber-900/30 px-2 py-0.5 rounded">Total: ${formatMoney(raulLent)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.raul.lent, 'text-amber-400')}
+                                </div>
+                            </div>
+
+                            <!-- Construção Raul -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-indigo-400">Material de Construção</span>
+                                    <span class="text-xs font-bold text-indigo-400 bg-indigo-900/30 px-2 py-0.5 rounded">Total: ${formatMoney(raulConstruction)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.raul.construction, 'text-indigo-300')}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <!-- Fran Resumo -->
+                    <div>
+                        <h3 class="text-rose-400 font-bold uppercase tracking-wider text-[11px] mb-4 border-b border-slate-700 pb-2">Gastos que a Fran pagou</h3>
+                        <div class="space-y-4">
+                            
+                            <!-- Mercado Fran -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-slate-200">Mercado / Diversos</span>
+                                    <span class="text-xs font-bold text-white bg-slate-700 px-2 py-0.5 rounded">Total: ${formatMoney(franShared)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.fran.shared, 'text-slate-300')}
+                                </div>
+                            </div>
+
+                            <!-- Cartão Fran -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-slate-200">Cartão de Crédito</span>
+                                    <span class="text-xs font-bold text-white bg-slate-700 px-2 py-0.5 rounded">Total: ${formatMoney(franCard)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.fran.card, 'text-slate-300')}
+                                </div>
+                            </div>
+
+                            <!-- Emprestados Fran -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-sm font-semibold text-amber-500">Emprestados do Raul (Pagou)</span>
+                                    <span class="text-xs font-bold text-amber-400 bg-amber-900/30 px-2 py-0.5 rounded">Total: ${formatMoney(franLent)}</span>
+                                </div>
+                                <div class="bg-slate-900/50 p-2 rounded-lg">
+                                    ${renderItemList(details.fran.lent, 'text-amber-400')}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 bg-slate-700/40 p-5 rounded-2xl border border-slate-600 shadow-inner">
+                    <h3 class="text-emerald-400 font-bold uppercase tracking-wider text-[11px] mb-3">Resumo do Combustível</h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li class="flex justify-between"><span>Custo do Carro:</span> <span class="font-medium text-white">${formatMoney(custoCarro)}</span></li>
+                        <li class="flex justify-between"><span>Desconto (${uberTrips} viagens de App):</span> <span class="font-medium text-purple-400">- ${formatMoney(custoApp)}</span></li>
+                        <li class="flex justify-between pt-3 mt-2 border-t border-slate-600/50">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total adicionado à dívida da Fran:</span> 
+                            <span class="text-lg font-black text-emerald-400">${formatMoney(globalFuelDebt)}</span>
+                        </li>
+                    </ul>
+                </div>
+            `;
+
+            // --- GERADOR DE TEXTO PARA ÁREA DE TRANSFERÊNCIA (WHATSAPP) ---
+            let finalStatus = "";
+            if (netBalance > 0.01) finalStatus = `Fran deve: ${formatMoney(netBalance)}`;
+            else if (netBalance < -0.01) finalStatus = `Raul deve: ${formatMoney(Math.abs(netBalance))}`;
+            else finalStatus = "Tudo quite!";
+
+            let txt = `📊 ACERTO DE CONTAS - RAUL E FRAN\n\n`;
+            txt += `🎯 RESULTADO FINAL: ${finalStatus}\n\n`;
+
+            const buildTextListTextOnly = (items) => {
+                if (items.length === 0) return ``;
+                return items.map(i => {
+                    const cleanDesc = i.desc.replace(/<[^>]*>?/gm, ''); // Remove código visual pra ficar texto limpo
+                    return `  - ${cleanDesc}: ${formatMoney(i.val)}`;
+                }).join('\n') + '\n';
+            };
+
+            txt += `🔵 GASTOS DO RAUL\n`;
+            if(raulShared > 0) txt += `🛒 Mercado/Diversos: ${formatMoney(raulShared)}\n` + buildTextListTextOnly(details.raul.shared);
+            if(raulCard > 0) txt += `💳 Cartão de Crédito: ${formatMoney(raulCard)}\n` + buildTextListTextOnly(details.raul.card);
+            if(raulLent > 0) txt += `💸 Emprestou à Fran: ${formatMoney(raulLent)}\n` + buildTextListTextOnly(details.raul.lent);
+            if(raulConstruction > 0) txt += `🧱 Construção: ${formatMoney(raulConstruction)}\n` + buildTextListTextOnly(details.raul.construction);
+            if (raulShared === 0 && raulCard === 0 && raulLent === 0 && raulConstruction === 0) txt += `  Nenhum gasto registrado.\n`;
+
+            txt += `\n🔴 GASTOS DA FRAN\n`;
+            if(franShared > 0) txt += `🛒 Mercado/Diversos: ${formatMoney(franShared)}\n` + buildTextListTextOnly(details.fran.shared);
+            if(franCard > 0) txt += `💳 Cartão de Crédito: ${formatMoney(franCard)}\n` + buildTextListTextOnly(details.fran.card);
+            if(franLent > 0) txt += `💰 Emprestados do Raul [Pagou]: ${formatMoney(franLent)}\n` + buildTextListTextOnly(details.fran.lent);
+            if (franShared === 0 && franCard === 0 && franLent === 0) txt += `  Nenhum gasto registrado.\n`;
+
+            txt += `\n⛽ COMBUSTÍVEL\n`;
+            txt += `  - Custo do Carro: ${formatMoney(custoCarro)}\n`;
+            txt += `  - Desconto App (${uberTrips} corridas): - ${formatMoney(custoApp)}\n`;
+            txt += `  👉 Adicionado à dívida da Fran: ${formatMoney(globalFuelDebt)}\n`;
+
+            window.clipboardText = txt;
+        }
+
+        // === 4. FUNÇÃO DE COPIAR PARA WHATSAPP ===
+        function copySummaryToClipboard(btn) {
+            if (!window.clipboardText) return;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = window.clipboardText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const textSpan = btn.querySelector('#copy-btn-text');
+                const originalText = textSpan.innerText;
+                const originalSvg = btn.querySelector('svg').outerHTML;
+                
+                // Feedback visual de sucesso
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4ade80" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path></svg><span id="copy-btn-text" class="text-emerald-400">Copiado!</span>`;
+                
+                setTimeout(() => {
+                    btn.innerHTML = `${originalSvg}<span id="copy-btn-text">${originalText}</span>`;
+                }, 2000);
+            } catch (err) {
+                console.error('Erro ao copiar', err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // === INSTALAÇÃO COMO APLICATIVO (PWA) ===
+        let deferredInstallPrompt = null;
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            document.getElementById('install-bar').classList.remove('hidden');
+        });
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            document.getElementById('install-bar').classList.add('hidden');
+        });
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-bar').classList.add('hidden');
+        });
+
+        if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+
+        // Inicialização
+        window.onload = function() {
+            initFields();
+            updateFuelFields();
+        };
+
+    </script>
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200 px-3 py-2 md:hidden shadow-[0_-4px_15px_rgba(0,0,0,0.06)]">
+        <div class="max-w-md mx-auto grid grid-cols-3 gap-2 text-center">
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="text-xs font-bold text-slate-600 py-2">🏠<br>Resumo</button>
+            <button onclick="document.getElementById('raul-shared-list').scrollIntoView({behavior:'smooth'})" class="text-xs font-bold text-blue-600 py-2">🔵<br>Gastos</button>
+            <button onclick="document.getElementById('summary-content').scrollIntoView({behavior:'smooth'})" class="text-xs font-bold text-slate-600 py-2">📄<br>Detalhes</button>
+        </div>
+    </nav>
+    <script>
+        if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+    </script>
+</body>
+</html>
